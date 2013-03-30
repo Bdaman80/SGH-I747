@@ -1200,8 +1200,11 @@ static void msm_otg_start_peripheral(struct otg_transceiver *otg, int on)
 				dev_err(motg->otg.dev, "%s: Failed to vote for "
 					   "bus bandwidth %d\n", __func__, ret);
 		}
-		if (!motg->disable_peripheral)
+		if (!motg->disable_peripheral) {
+			pr_info("%s disable_peripheral: %x\n",
+				__func__, motg->disable_peripheral);
 			usb_gadget_vbus_connect(otg->gadget);
+		}
 		else
 			pr_info("USBLOCK: peripheral mode is blocked!!\n");
 	} else {
@@ -2269,6 +2272,27 @@ void msm_otg_set_smartdock_state(bool enable)
 	schedule_work(&motg->sm_work);
 }
 EXPORT_SYMBOL_GPL(msm_otg_set_smartdock_state);
+
+#ifdef CONFIG_CAMERON_HEALTH
+void msm_otg_set_cameronhealth_state(bool enable)
+{
+	struct msm_otg *motg = the_msm_otg;
+
+	if (!enable) {
+		pr_info("CAMERON_HEALTH : ID set\n");
+		set_bit(ID, &motg->inputs);
+	} else {
+		pr_info("CAMERON_HEALTH : ID clear\n");
+		clear_bit(ID, &motg->inputs);
+	}
+
+	if (test_bit(B_SESS_VLD, &motg->inputs))
+		clear_bit(B_SESS_VLD, &motg->inputs);
+
+	schedule_work(&motg->sm_work);
+}
+EXPORT_SYMBOL_GPL(msm_otg_set_cameronhealth_state);
+#endif
 
 static void msm_otg_enable_peripheral(struct msm_otg *motg, bool enable)
 {

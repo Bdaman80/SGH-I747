@@ -1,5 +1,4 @@
 ################################################################################
-
 1. How to Build
 	- get Toolchain
 		From android git server , codesourcery and etc ..
