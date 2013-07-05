@@ -1,1 +1,1 @@
-#define UTS_RELEASE "3.0.32_Bdaman_2013-04-21-g44458eb-dirty"
+#define UTS_RELEASE "3.0.322013-06-20_Bdaman-g52d82cd-dirty"

@@ -1,0 +1,25 @@
+#!/bin/bash
+#Script to set env variables and then use them to build android kernel
+#
+# Lets see how this goes
+#
+export ARCH=arm
+export CROSS_COMPILE=arm-eabi-
+export PATH=$PATH:/1TB/DroidBuilder/sources/toolchains/arm-eabi-4.4.3/bin
+#
+#
+#
+echo " "
+echo " "
+echo "Architecture is set to  ' $ARCH '  "
+echo " "
+echo " "
+echo "Cross Compiler is set to ' $CROSS_COMPILE ' "
+echo " "
+echo " "
+echo "User paths are set to ' $PATH ' "
+echo " "
+echo " "
+gnome-terminal
+exit 0
+
