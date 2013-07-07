@@ -1,0 +1,33 @@
+--- drivers/char/tpm/tpm.c
++++ drivers/char/tpm/tpm.c
+@@ -383,6 +383,9 @@
+ 	u32 count, ordinal;
+ 	unsigned long stop;
+ 
++	if (bufsiz > TPM_BUFSIZE)
++		bufsiz = TPM_BUFSIZE;
++
+ 	count = be32_to_cpu(*((__be32 *) (buf + 2)));
+ 	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
+ 	if (count == 0)
+@@ -1052,6 +1055,7 @@
+ {
+ 	struct tpm_chip *chip = file->private_data;
+ 	ssize_t ret_size;
++	int rc;
+ 
+ 	del_singleshot_timer_sync(&chip->user_read_timer);
+ 	flush_work_sync(&chip->work);
+@@ -1062,8 +1066,11 @@
+ 			ret_size = size;
+ 
+ 		mutex_lock(&chip->buffer_mutex);
+-		if (copy_to_user(buf, chip->data_buffer, ret_size))
++		rc = copy_to_user(buf, chip->data_buffer, ret_size);
++		memset(chip->data_buffer, 0, ret_size);
++		if (rc)
+ 			ret_size = -EFAULT;
++
+ 		mutex_unlock(&chip->buffer_mutex);
+ 	}
+ 

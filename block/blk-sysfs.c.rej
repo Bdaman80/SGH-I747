@@ -1,0 +1,14 @@
+--- block/blk-sysfs.c
++++ block/blk-sysfs.c
+@@ -472,6 +472,11 @@
+ 
+ 	blk_sync_queue(q);
+ 
++	if (q->elevator)
++		elevator_exit(q->elevator);
++
++	blk_throtl_exit(q);
++
+ 	if (rl->rq_pool)
+ 		mempool_destroy(rl->rq_pool);
+ 

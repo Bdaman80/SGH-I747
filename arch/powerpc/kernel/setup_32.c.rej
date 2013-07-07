@@ -1,0 +1,11 @@
+--- arch/powerpc/kernel/setup_32.c
++++ arch/powerpc/kernel/setup_32.c
+@@ -107,6 +107,8 @@
+ 			 PTRRELOC(&__start___lwsync_fixup),
+ 			 PTRRELOC(&__stop___lwsync_fixup));
+ 
++	do_final_fixups();
++
+ 	return KERNELBASE + offset;
+ }
+ 

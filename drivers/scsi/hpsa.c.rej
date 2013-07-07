@@ -1,0 +1,48 @@
+--- drivers/scsi/hpsa.c
++++ drivers/scsi/hpsa.c
+@@ -1626,26 +1598,30 @@
+ 
+ 	if (is_logical_dev_addr_mode(lunaddrbytes)) {
+ 		/* logical device */
+-		lunid = le32_to_cpu(*((__le32 *) lunaddrbytes));
+-		if (is_msa2xxx(h, device)) {
+-			/* msa2xxx way, put logicals on bus 1
+-			 * and match target/lun numbers box
+-			 * reports.
++		if (unlikely(is_scsi_rev_5(h))) {
++			/* p1210m, logical drives lun assignments
++			 * match SCSI REPORT LUNS data.
+ 			 */
+-			*bus = 1;
+-			*target = (lunid >> 16) & 0x3fff;
+-			*lun = lunid & 0x00ff;
++			lunid = le32_to_cpu(*((__le32 *) lunaddrbytes));
++			*bus = 0;
++			*target = 0;
++			*lun = (lunid & 0x3fff) + 1;
+ 		} else {
+-			if (likely(is_scsi_rev_5(h))) {
+-				/* All current smart arrays (circa 2011) */
+-				*bus = 0;
+-				*target = 0;
+-				*lun = (lunid & 0x3fff) + 1;
++			/* not p1210m... */
++			lunid = le32_to_cpu(*((__le32 *) lunaddrbytes));
++			if (is_msa2xxx(h, device)) {
++				/* msa2xxx way, put logicals on bus 1
++				 * and match target/lun numbers box
++				 * reports.
++				 */
++				*bus = 1;
++				*target = (lunid >> 16) & 0x3fff;
++				*lun = lunid & 0x00ff;
+ 			} else {
+-				/* Traditional old smart array way. */
++				/* Traditional smart array way. */
+ 				*bus = 0;
++				*lun = 0;
+ 				*target = lunid & 0x3fff;
+-				*lun = 0;
+ 			}
+ 		}
+ 	} else {

@@ -1,0 +1,10 @@
+--- arch/sparc/kernel/cpumap.c
++++ arch/sparc/kernel/cpumap.c
+@@ -324,6 +324,7 @@
+ 	switch (sun4v_chip_type) {
+ 	case SUN4V_CHIP_NIAGARA1:
+ 	case SUN4V_CHIP_NIAGARA2:
++	case SUN4V_CHIP_NIAGARA3:
+ 		rover_inc_table = niagara_iterate_method;
+ 		break;
+ 	default:

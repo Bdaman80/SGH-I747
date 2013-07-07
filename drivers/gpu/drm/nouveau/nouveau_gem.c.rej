@@ -1,0 +1,20 @@
+--- drivers/gpu/drm/nouveau/nouveau_gem.c
++++ drivers/gpu/drm/nouveau/nouveau_gem.c
+@@ -346,7 +365,7 @@
+ 	list_for_each_entry(nvbo, list, entry) {
+ 		struct drm_nouveau_gem_pushbuf_bo *b = &pbbo[nvbo->pbbo_index];
+ 
+-		ret = nouveau_fence_sync(nvbo->bo.sync_obj, chan);
++		ret = validate_sync(chan, nvbo);
+ 		if (unlikely(ret)) {
+ 			NV_ERROR(dev, "fail pre-validate sync\n");
+ 			return ret;
+@@ -369,7 +388,7 @@
+ 			return ret;
+ 		}
+ 
+-		ret = nouveau_fence_sync(nvbo->bo.sync_obj, chan);
++		ret = validate_sync(chan, nvbo);
+ 		if (unlikely(ret)) {
+ 			NV_ERROR(dev, "fail post-validate sync\n");
+ 			return ret;

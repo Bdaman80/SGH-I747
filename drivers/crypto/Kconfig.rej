@@ -1,0 +1,10 @@
+--- drivers/crypto/Kconfig
++++ drivers/crypto/Kconfig
+@@ -173,6 +173,7 @@
+ 	select CRYPTO_ALGAPI
+ 	select CRYPTO_AES
+ 	select CRYPTO_BLKCIPHER2
++	select CRYPTO_HASH
+ 	help
+ 	  This driver allows you to utilize the Cryptographic Engines and
+ 	  Security Accelerator (CESA) which can be found on the Marvell Orion

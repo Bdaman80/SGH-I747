@@ -1,0 +1,11 @@
+--- arch/x86/kernel/relocate_kernel_64.S
++++ arch/x86/kernel/relocate_kernel_64.S
+@@ -100,6 +100,8 @@
+ 	ret
+ 
+ identity_mapped:
++	/* set return address to 0 if not preserving context */
++	pushq	$0
+ 	/* store the start address on the stack */
+ 	pushq   %rdx
+ 

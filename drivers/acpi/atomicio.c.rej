@@ -1,0 +1,11 @@
+--- drivers/acpi/atomicio.c
++++ drivers/acpi/atomicio.c
+@@ -76,7 +76,7 @@
+ {
+ 	struct acpi_iomap *map;
+ 
+-	map = __acpi_find_iomap(paddr, size);
++	map = __acpi_find_iomap(paddr, size/8);
+ 	if (map)
+ 		return map->vaddr + (paddr - map->paddr);
+ 	else

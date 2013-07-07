@@ -1,0 +1,12 @@
+--- arch/sparc/kernel/perf_event.c
++++ arch/sparc/kernel/perf_event.c
+@@ -1301,7 +1301,8 @@
+ 		sparc_pmu = &niagara1_pmu;
+ 		return true;
+ 	}
+-	if (!strcmp(sparc_pmu_type, "niagara2")) {
++	if (!strcmp(sparc_pmu_type, "niagara2") ||
++	    !strcmp(sparc_pmu_type, "niagara3")) {
+ 		sparc_pmu = &niagara2_pmu;
+ 		return true;
+ 	}

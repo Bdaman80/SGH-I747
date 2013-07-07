@@ -1,0 +1,11 @@
+--- arch/alpha/include/asm/futex.h
++++ arch/alpha/include/asm/futex.h
+@@ -108,7 +108,7 @@
+ 	"	lda	$31,3b-2b(%0)\n"
+ 	"	.previous\n"
+ 	:	"+r"(ret), "=&r"(prev), "=&r"(cmp)
+-	:	"r"(uaddr), "r"((long)oldval), "r"(newval)
++	:	"r"(uaddr), "r"((long)(int)oldval), "r"(newval)
+ 	:	"memory");
+ 
+ 	*uval = prev;

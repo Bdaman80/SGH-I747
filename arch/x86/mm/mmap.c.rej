@@ -1,0 +1,14 @@
+--- arch/x86/mm/mmap.c
++++ arch/x86/mm/mmap.c
+@@ -87,9 +87,9 @@
+ 	*/
+ 	if (current->flags & PF_RANDOMIZE) {
+ 		if (mmap_is_ia32())
+-			rnd = (long)get_random_int() % (1<<8);
++			rnd = get_random_int() % (1<<8);
+ 		else
+-			rnd = (long)(get_random_int() % (1<<28));
++			rnd = get_random_int() % (1<<28);
+ 	}
+ 	return rnd << PAGE_SHIFT;
+ }

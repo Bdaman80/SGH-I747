@@ -1,0 +1,20 @@
+--- arch/powerpc/platforms/pseries/dlpar.c
++++ arch/powerpc/platforms/pseries/dlpar.c
+@@ -112,6 +112,7 @@
+ 	dlpar_free_one_cc_node(dn);
+ }
+ 
++#define COMPLETE	0
+ #define NEXT_SIBLING    1
+ #define NEXT_CHILD      2
+ #define NEXT_PROPERTY   3
+@@ -158,6 +159,9 @@
+ 		spin_unlock(&rtas_data_buf_lock);
+ 
+ 		switch (rc) {
++		case COMPLETE:
++			break;
++
+ 		case NEXT_SIBLING:
+ 			dn = dlpar_parse_cc_node(ccwa);
+ 			if (!dn)

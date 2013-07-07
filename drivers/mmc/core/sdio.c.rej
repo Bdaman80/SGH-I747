@@ -1,0 +1,11 @@
+--- drivers/mmc/core/sdio.c
++++ drivers/mmc/core/sdio.c
+@@ -664,7 +663,7 @@
+ 	}
+ 
+ 	if (!err && host->sdio_irqs)
+-		wake_up_process(host->sdio_irq_thread);
++		mmc_signal_sdio_irq(host);
+ 	mmc_release_host(host);
+ 
+ 	/*

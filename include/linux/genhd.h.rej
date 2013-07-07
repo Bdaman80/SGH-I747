@@ -1,0 +1,10 @@
+--- include/linux/genhd.h
++++ include/linux/genhd.h
+@@ -588,6 +582,7 @@
+ 
+ extern int disk_expand_part_tbl(struct gendisk *disk, int target);
+ extern int rescan_partitions(struct gendisk *disk, struct block_device *bdev);
++extern int invalidate_partitions(struct gendisk *disk, struct block_device *bdev);
+ extern struct hd_struct * __must_check add_partition(struct gendisk *disk,
+ 						     int partno, sector_t start,
+ 						     sector_t len, int flags,

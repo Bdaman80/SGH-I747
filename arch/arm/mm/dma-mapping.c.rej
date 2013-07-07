@@ -1,0 +1,11 @@
+--- arch/arm/mm/dma-mapping.c
++++ arch/arm/mm/dma-mapping.c
+@@ -322,6 +322,8 @@
+ 
+ 	if (addr)
+ 		*handle = pfn_to_dma(dev, page_to_pfn(page));
++	else
++		__dma_free_buffer(page, size);
+ 
+ 	return addr;
+ }

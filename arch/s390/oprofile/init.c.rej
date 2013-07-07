@@ -1,0 +1,11 @@
+--- arch/s390/oprofile/init.c
++++ arch/s390/oprofile/init.c
+@@ -90,7 +90,7 @@
+ 		return -EINVAL;
+ 
+ 	retval = oprofilefs_ulong_from_user(&val, buf, count);
+-	if (retval)
++	if (retval <= 0)
+ 		return retval;
+ 
+ 	if (oprofile_started)

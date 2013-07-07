@@ -1,0 +1,11 @@
+--- arch/powerpc/platforms/pseries/eeh.c
++++ arch/powerpc/platforms/pseries/eeh.c
+@@ -1338,7 +1338,7 @@
+ static int __init eeh_init_proc(void)
+ {
+ 	if (machine_is(pseries))
+-		proc_create("ppc64/eeh", 0, NULL, &proc_eeh_operations);
++		proc_create("powerpc/eeh", 0, NULL, &proc_eeh_operations);
+ 	return 0;
+ }
+ __initcall(eeh_init_proc);

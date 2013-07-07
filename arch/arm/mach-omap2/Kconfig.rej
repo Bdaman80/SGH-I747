@@ -1,0 +1,10 @@
+--- arch/arm/mach-omap2/Kconfig
++++ arch/arm/mach-omap2/Kconfig
+@@ -326,6 +326,7 @@
+ config OMAP3_EMU
+ 	bool "OMAP3 debugging peripherals"
+ 	depends on ARCH_OMAP3
++	select ARM_AMBA
+ 	select OC_ETM
+ 	help
+ 	  Say Y here to enable debugging hardware of omap3

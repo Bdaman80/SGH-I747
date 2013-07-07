@@ -1,0 +1,11 @@
+--- arch/powerpc/platforms/ps3/smp.c
++++ arch/powerpc/platforms/ps3/smp.c
+@@ -94,6 +94,8 @@
+ 
+ 		if (result)
+ 			virqs[i] = NO_IRQ;
++		else
++			ps3_register_ipi_irq(cpu, virqs[i]);
+ 	}
+ 
+ 	ps3_register_ipi_debug_brk(cpu, virqs[PPC_MSG_DEBUGGER_BREAK]);

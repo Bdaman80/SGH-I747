@@ -1,0 +1,11 @@
+--- arch/arm/oprofile/common.c
++++ arch/arm/oprofile/common.c
+@@ -116,7 +116,7 @@
+ 	return oprofile_perf_init(ops);
+ }
+ 
+-void __exit oprofile_arch_exit(void)
++void oprofile_arch_exit(void)
+ {
+ 	oprofile_perf_exit();
+ }

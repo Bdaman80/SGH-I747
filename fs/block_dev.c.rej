@@ -1,0 +1,99 @@
+--- fs/block_dev.c
++++ fs/block_dev.c
+@@ -1075,6 +1075,7 @@
+ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
+ {
+ 	struct gendisk *disk;
++	struct module *owner;
+ 	int ret;
+ 	int partno;
+ 	int perm = 0;
+@@ -1128,8 +1130,8 @@
+ 					bdev->bd_disk = NULL;
+ 					mutex_unlock(&bdev->bd_mutex);
+ 					disk_unblock_events(disk);
+-					module_put(disk->fops->owner);
+ 					put_disk(disk);
++					module_put(owner);
+ 					goto restart;
+ 				}
+ 			}
+@@ -1148,8 +1150,12 @@
+ 			 * The latter is necessary to prevent ghost
+ 			 * partitions on a removed medium.
+ 			 */
+-			if (bdev->bd_invalidated && (!ret || ret == -ENOMEDIUM))
+-				rescan_partitions(disk, bdev);
++			if (bdev->bd_invalidated) {
++				if (!ret)
++					rescan_partitions(disk, bdev);
++				else if (ret == -ENOMEDIUM)
++					invalidate_partitions(disk, bdev);
++			}
+ 			if (ret)
+ 				goto out_clear;
+ 		} else {
+@@ -1179,14 +1185,18 @@
+ 			if (bdev->bd_disk->fops->open)
+ 				ret = bdev->bd_disk->fops->open(bdev, mode);
+ 			/* the same as first opener case, read comment there */
+-			if (bdev->bd_invalidated && (!ret || ret == -ENOMEDIUM))
+-				rescan_partitions(bdev->bd_disk, bdev);
++			if (bdev->bd_invalidated) {
++				if (!ret)
++					rescan_partitions(bdev->bd_disk, bdev);
++				else if (ret == -ENOMEDIUM)
++					invalidate_partitions(bdev->bd_disk, bdev);
++			}
+ 			if (ret)
+ 				goto out_unlock_bdev;
+ 		}
+ 		/* only one opener holds refs to the module and disk */
+-		module_put(disk->fops->owner);
+ 		put_disk(disk);
++		module_put(owner);
+ 	}
+ 	bdev->bd_openers++;
+ 	if (for_part)
+@@ -1206,8 +1216,8 @@
+  out_unlock_bdev:
+ 	mutex_unlock(&bdev->bd_mutex);
+ 	disk_unblock_events(disk);
+-	module_put(disk->fops->owner);
+ 	put_disk(disk);
++	module_put(owner);
+  out:
+ 	bdput(bdev);
+ 
+@@ -1420,6 +1430,11 @@
+ 		WARN_ON_ONCE(bdev->bd_holders);
+ 		sync_blockdev(bdev);
+ 		kill_bdev(bdev);
++		/* ->release can cause the old bdi to disappear,
++		 * so must switch it out first
++		 */
++		bdev_inode_switch_bdi(bdev->bd_inode,
++					&default_backing_dev_info);
+ 	}
+ 	if (bdev->bd_contains == bdev) {
+ 		if (disk->fops->release)
+@@ -1428,16 +1443,15 @@
+ 	if (!bdev->bd_openers) {
+ 		struct module *owner = disk->fops->owner;
+ 
+-		put_disk(disk);
+-		module_put(owner);
+ 		disk_put_part(bdev->bd_part);
+ 		bdev->bd_part = NULL;
+ 		bdev->bd_disk = NULL;
+-		bdev_inode_switch_bdi(bdev->bd_inode,
+-					&default_backing_dev_info);
+ 		if (bdev != bdev->bd_contains)
+ 			victim = bdev->bd_contains;
+ 		bdev->bd_contains = NULL;
++
++		put_disk(disk);
++		module_put(owner);
+ 	}
+ 	mutex_unlock(&bdev->bd_mutex);
+ 	bdput(bdev);

@@ -1,0 +1,62 @@
+--- drivers/usb/core/devio.c
++++ drivers/usb/core/devio.c
+@@ -408,7 +409,7 @@
+ 		sinfo.si_errno = as->status;
+ 		sinfo.si_code = SI_ASYNCIO;
+ 		sinfo.si_addr = as->userurb;
+-		pid = as->pid;
++		pid = get_pid(as->pid);
+ 		uid = as->uid;
+ 		euid = as->euid;
+ 		secid = as->secid;
+@@ -423,15 +424,18 @@
+ 		cancel_bulk_urbs(ps, as->bulk_addr);
+ 	spin_unlock(&ps->lock);
+ 
+-	if (signr)
++	if (signr) {
+ 		kill_pid_info_as_uid(sinfo.si_signo, &sinfo, pid, uid,
+ 				      euid, secid);
++		put_pid(pid);
++	}
+ 
+ 	wake_up(&ps->wait);
+ }
+ 
+ static void destroy_async(struct dev_state *ps, struct list_head *list)
+ {
++	struct urb *urb;
+ 	struct async *as;
+ 	unsigned long flags;
+ 
+@@ -611,9 +618,10 @@
+ }
+ 
+ static int check_ctrlrecip(struct dev_state *ps, unsigned int requesttype,
+-			   unsigned int index)
++			   unsigned int request, unsigned int index)
+ {
+ 	int ret = 0;
++	struct usb_host_interface *alt_setting;
+ 
+ 	if (ps->dev->state != USB_STATE_UNAUTHENTICATED
+ 	 && ps->dev->state != USB_STATE_ADDRESS
+@@ -787,7 +808,8 @@
+ 
+ 	if (copy_from_user(&ctrl, arg, sizeof(ctrl)))
+ 		return -EFAULT;
+-	ret = check_ctrlrecip(ps, ctrl.bRequestType, ctrl.wIndex);
++	ret = check_ctrlrecip(ps, ctrl.bRequestType, ctrl.bRequest,
++			      ctrl.wIndex);
+ 	if (ret)
+ 		return ret;
+ 	wLength = ctrl.wLength;		/* To suppress 64k PAGE_SIZE warning */
+@@ -1117,7 +1139,7 @@
+ 			kfree(dr);
+ 			return -EINVAL;
+ 		}
+-		ret = check_ctrlrecip(ps, dr->bRequestType,
++		ret = check_ctrlrecip(ps, dr->bRequestType, dr->bRequest,
+ 				      le16_to_cpup(&dr->wIndex));
+ 		if (ret) {
+ 			kfree(dr);

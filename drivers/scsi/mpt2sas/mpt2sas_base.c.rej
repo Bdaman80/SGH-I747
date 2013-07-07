@@ -1,0 +1,29 @@
+--- drivers/scsi/mpt2sas/mpt2sas_base.c
++++ drivers/scsi/mpt2sas/mpt2sas_base.c
+@@ -3118,7 +3180,7 @@
+ 	}
+ 
+ 	pfacts = &ioc->pfacts[port];
+-	memset(pfacts, 0, sizeof(struct mpt2sas_port_facts));
++	memset(pfacts, 0, sizeof(Mpi2PortFactsReply_t));
+ 	pfacts->PortNumber = mpi_reply.PortNumber;
+ 	pfacts->VP_ID = mpi_reply.VP_ID;
+ 	pfacts->VF_ID = mpi_reply.VF_ID;
+@@ -3159,7 +3220,7 @@
+ 	}
+ 
+ 	facts = &ioc->facts;
+-	memset(facts, 0, sizeof(struct mpt2sas_facts));
++	memset(facts, 0, sizeof(Mpi2IOCFactsReply_t));
+ 	facts->MsgVersion = le16_to_cpu(mpi_reply.MsgVersion);
+ 	facts->HeaderVersion = le16_to_cpu(mpi_reply.HeaderVersion);
+ 	facts->VP_ID = mpi_reply.VP_ID;
+@@ -3863,7 +3947,7 @@
+ 		goto out_free_resources;
+ 
+ 	ioc->pfacts = kcalloc(ioc->facts.NumberOfPorts,
+-	    sizeof(struct mpt2sas_port_facts), GFP_KERNEL);
++	    sizeof(Mpi2PortFactsReply_t), GFP_KERNEL);
+ 	if (!ioc->pfacts) {
+ 		r = -ENOMEM;
+ 		goto out_free_resources;

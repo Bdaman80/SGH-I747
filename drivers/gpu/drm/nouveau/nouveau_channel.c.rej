@@ -1,0 +1,10 @@
+--- drivers/gpu/drm/nouveau/nouveau_channel.c
++++ drivers/gpu/drm/nouveau/nouveau_channel.c
+@@ -159,6 +159,7 @@
+ 	INIT_LIST_HEAD(&chan->nvsw.vbl_wait);
+ 	INIT_LIST_HEAD(&chan->nvsw.flip);
+ 	INIT_LIST_HEAD(&chan->fence.pending);
++	spin_lock_init(&chan->fence.lock);
+ 
+ 	/* Allocate DMA push buffer */
+ 	chan->pushbuf_bo = nouveau_channel_user_pushbuf_alloc(dev);

@@ -1,0 +1,11 @@
+--- arch/powerpc/platforms/pseries/hvconsole.c
++++ arch/powerpc/platforms/pseries/hvconsole.c
+@@ -73,7 +73,7 @@
+ 	if (ret == H_SUCCESS)
+ 		return count;
+ 	if (ret == H_BUSY)
+-		return 0;
++		return -EAGAIN;
+ 	return -EIO;
+ }
+ 

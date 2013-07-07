@@ -1,0 +1,11 @@
+--- arch/alpha/kernel/time.c
++++ arch/alpha/kernel/time.c
+@@ -91,7 +91,7 @@
+ #define test_irq_work_pending()      __get_cpu_var(irq_work_pending)
+ #define clear_irq_work_pending()     __get_cpu_var(irq_work_pending) = 0
+ 
+-void set_irq_work_pending(void)
++void arch_irq_work_raise(void)
+ {
+ 	set_irq_work_pending_flag();
+ }

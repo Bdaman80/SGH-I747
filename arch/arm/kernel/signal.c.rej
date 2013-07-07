@@ -1,0 +1,21 @@
+--- arch/arm/kernel/signal.c
++++ arch/arm/kernel/signal.c
+@@ -227,6 +227,8 @@
+ 	if (magic != VFP_MAGIC || size != VFP_STORAGE_SIZE)
+ 		return -EINVAL;
+ 
++	vfp_flush_hwstate(thread);
++
+ 	/*
+ 	 * Copy the floating point registers. There can be unused
+ 	 * registers see asm/hwcap.h for details.
+@@ -251,9 +253,6 @@
+ 	__get_user_error(h->fpinst, &frame->ufp_exc.fpinst, err);
+ 	__get_user_error(h->fpinst2, &frame->ufp_exc.fpinst2, err);
+ 
+-	if (!err)
+-		vfp_flush_hwstate(thread);
+-
+ 	return err ? -EFAULT : 0;
+ }
+ 

@@ -1,0 +1,11 @@
+--- arch/x86/include/asm/apic.h
++++ arch/x86/include/asm/apic.h
+@@ -495,7 +495,7 @@
+ 	return;
+ }
+ 
+-extern struct apic *generic_bigsmp_probe(void);
++extern void generic_bigsmp_probe(void);
+ 
+ 
+ #ifdef CONFIG_X86_LOCAL_APIC

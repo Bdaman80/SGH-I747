@@ -1,0 +1,10 @@
+--- arch/powerpc/platforms/ps3/platform.h
++++ arch/powerpc/platforms/ps3/platform.h
+@@ -43,6 +43,7 @@
+ void ps3_init_IRQ(void);
+ void ps3_shutdown_IRQ(int cpu);
+ void __init ps3_register_ipi_debug_brk(unsigned int cpu, unsigned int virq);
++void __init ps3_register_ipi_irq(unsigned int cpu, unsigned int virq);
+ 
+ /* smp */
+ 

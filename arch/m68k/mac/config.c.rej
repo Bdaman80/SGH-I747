@@ -1,0 +1,12 @@
+--- arch/m68k/mac/config.c
++++ arch/m68k/mac/config.c
+@@ -950,6 +950,9 @@
+ {
+ 	u8 *swim_base;
+ 
++	if (!MACH_IS_MAC)
++		return -ENODEV;
++
+ 	/*
+ 	 * Serial devices
+ 	 */

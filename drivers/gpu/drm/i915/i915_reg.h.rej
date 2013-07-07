@@ -1,0 +1,37 @@
+--- drivers/gpu/drm/i915/i915_reg.h
++++ drivers/gpu/drm/i915/i915_reg.h
+@@ -2289,6 +2304,7 @@
+ #define   PIPECONF_DISABLE	0
+ #define   PIPECONF_DOUBLE_WIDE	(1<<30)
+ #define   I965_PIPECONF_ACTIVE	(1<<30)
++#define   PIPECONF_FRAME_START_DELAY_MASK (3<<27)
+ #define   PIPECONF_SINGLE_WIDE	0
+ #define   PIPECONF_PIPE_UNLOCKED 0
+ #define   PIPECONF_PIPE_LOCKED	(1<<25)
+@@ -2559,10 +2575,18 @@
+ #define _CURBBASE		0x700c4
+ #define _CURBPOS			0x700c8
+ 
++#define _CURBCNTR_IVB		0x71080
++#define _CURBBASE_IVB		0x71084
++#define _CURBPOS_IVB		0x71088
++
+ #define CURCNTR(pipe) _PIPE(pipe, _CURACNTR, _CURBCNTR)
+ #define CURBASE(pipe) _PIPE(pipe, _CURABASE, _CURBBASE)
+ #define CURPOS(pipe) _PIPE(pipe, _CURAPOS, _CURBPOS)
+ 
++#define CURCNTR_IVB(pipe) _PIPE(pipe, _CURACNTR, _CURBCNTR_IVB)
++#define CURBASE_IVB(pipe) _PIPE(pipe, _CURABASE, _CURBBASE_IVB)
++#define CURPOS_IVB(pipe) _PIPE(pipe, _CURAPOS, _CURBPOS_IVB)
++
+ /* Display A control */
+ #define _DSPACNTR                0x70180
+ #define   DISPLAY_PLANE_ENABLE			(1<<31)
+@@ -3162,6 +3200,7 @@
+ #define  FDI_LINK_TRAIN_NONE_IVB            (3<<8)
+ 
+ /* both Tx and Rx */
++#define  FDI_COMPOSITE_SYNC		(1<<11)
+ #define  FDI_LINK_TRAIN_AUTO		(1<<10)
+ #define  FDI_SCRAMBLING_ENABLE          (0<<7)
+ #define  FDI_SCRAMBLING_DISABLE         (1<<7)

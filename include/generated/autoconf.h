@@ -1,10 +1,9 @@
 /*
  * Automatically generated C config: don't edit
- * Linux/arm 3.0.32 Kernel Configuration
+ * Linux/arm 3.0.31 Kernel Configuration
  */
 #define CONFIG_NF_CONNTRACK_H323 1
 #define CONFIG_SCSI_DMA 1
-#define CONFIG_KERNEL_GZIP 1
 #define CONFIG_MSM_VIDC_VENC 1
 #define CONFIG_BROADCOM_WIFI_RESERVED_MEM 1
 #define CONFIG_INPUT_KEYBOARD 1
@@ -566,6 +565,7 @@
 #define CONFIG_HAS_IOMEM 1
 #define CONFIG_SND_RAWMIDI 1
 #define CONFIG_PPPOPNS 1
+#define CONFIG_KERNEL_LZO 1
 #define CONFIG_GENERIC_IRQ_PROBE 1
 #define CONFIG_USB_STORAGE_SDDR09 1
 #define CONFIG_IP_NF_MATCH_TTL 1
@@ -701,7 +701,7 @@
 #define CONFIG_MSM_CAMERA 1
 #define CONFIG_DEBUG_KERNEL 1
 #define CONFIG_COMPAT_BRK 1
-#define CONFIG_LOCALVERSION "2013-06-20_Bdaman"
+#define CONFIG_LOCALVERSION ""
 #define CONFIG_MACH_NO_WESTBRIDGE 1
 #define CONFIG_KERNEL_PMEM_EBI_REGION 1
 #define CONFIG_CRYPTO 1

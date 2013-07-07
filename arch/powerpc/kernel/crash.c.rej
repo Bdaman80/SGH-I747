@@ -1,0 +1,16 @@
+--- arch/powerpc/kernel/crash.c
++++ arch/powerpc/kernel/crash.c
+@@ -242,12 +242,8 @@
+ 
+ 		while (paca[i].kexec_state < KEXEC_STATE_REAL_MODE) {
+ 			barrier();
+-			if (!cpu_possible(i)) {
++			if (!cpu_possible(i) || !cpu_online(i) || (msecs <= 0))
+ 				break;
+-			}
+-			if (!cpu_online(i)) {
+-				break;
+-			}
+ 			msecs--;
+ 			mdelay(1);
+ 		}

@@ -1,0 +1,15 @@
+--- drivers/gpu/drm/nouveau/nouveau_sgdma.c
++++ drivers/gpu/drm/nouveau/nouveau_sgdma.c
+@@ -37,8 +37,11 @@
+ 		return -ENOMEM;
+ 
+ 	nvbe->ttm_alloced = kmalloc(sizeof(bool) * num_pages, GFP_KERNEL);
+-	if (!nvbe->ttm_alloced)
++	if (!nvbe->ttm_alloced) {
++		kfree(nvbe->pages);
++		nvbe->pages = NULL;
+ 		return -ENOMEM;
++	}
+ 
+ 	nvbe->nr_pages = 0;
+ 	while (num_pages--) {

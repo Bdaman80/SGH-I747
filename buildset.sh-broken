@@ -1,0 +1,38 @@
+cd ..
+#!/bin/bash
+#Script to set env variables and then use them to build android kernel
+#
+# Lets see how this goes
+#
+$ARCH=arm
+$CROSS_COMPILE=arm-eabi-
+
+export $ARCH
+export $CROSS_COMPILE
+#
+#
+#
+echo " "
+echo " "
+echo "Architecture is set to  ' $ARCH '  "
+echo " "
+echo " "
+echo "Cross Compiler is set to ' $CROSS_COMPILE ' "
+echo " "
+echo " "
+echo "User paths are set to ' $PATH ' "
+echo " "
+echo " "
+
+echo "Menu Configuration"
+echo " " 
+make menuconfig
+echo " " 
+echo " " 
+echo " Let's Build this thing!" 
+echo " " 
+make
+cp arch/arm/boot/zImage mv-built/
+
+exit 0
+

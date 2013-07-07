@@ -1,0 +1,10 @@
+--- arch/powerpc/kernel/setup_64.c
++++ arch/powerpc/kernel/setup_64.c
+@@ -352,6 +352,7 @@
+ 			  &__start___fw_ftr_fixup, &__stop___fw_ftr_fixup);
+ 	do_lwsync_fixups(cur_cpu_spec->cpu_features,
+ 			 &__start___lwsync_fixup, &__stop___lwsync_fixup);
++	do_final_fixups();
+ 
+ 	/*
+ 	 * Unflatten the device-tree passed by prom_init or kexec

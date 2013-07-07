@@ -1,0 +1,14 @@
+--- arch/x86/lib/delay.c
++++ arch/x86/lib/delay.c
+@@ -48,9 +48,9 @@
+ }
+ 
+ /* TSC based delay: */
+-static void delay_tsc(unsigned long loops)
++static void delay_tsc(unsigned long __loops)
+ {
+-	unsigned long bclock, now;
++	u32 bclock, now, loops = __loops;
+ 	int cpu;
+ 
+ 	preempt_disable();

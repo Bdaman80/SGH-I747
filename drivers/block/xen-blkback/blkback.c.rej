@@ -1,0 +1,11 @@
+--- drivers/block/xen-blkback/blkback.c
++++ drivers/block/xen-blkback/blkback.c
+@@ -667,7 +667,7 @@
+ 
+ 	if (operation == READ)
+ 		blkif->st_rd_sect += preq.nr_sects;
+-	else if (operation == WRITE || operation == WRITE_FLUSH)
++	else if (operation & WRITE)
+ 		blkif->st_wr_sect += preq.nr_sects;
+ 
+ 	return 0;

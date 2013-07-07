@@ -1,0 +1,11 @@
+--- drivers/usb/class/cdc-wdm.c
++++ drivers/usb/class/cdc-wdm.c
+@@ -498,7 +485,7 @@
+ 
+ 	spin_lock_irqsave(&desc->iuspin, flags);
+ 	if (test_bit(WDM_DISCONNECTING, &desc->flags)) {
+-		mask = POLLHUP | POLLERR;
++		mask = POLLERR;
+ 		spin_unlock_irqrestore(&desc->iuspin, flags);
+ 		goto desc_out;
+ 	}

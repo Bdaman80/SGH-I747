@@ -1,0 +1,15 @@
+--- arch/sparc/kernel/pci_sun4v.c
++++ arch/sparc/kernel/pci_sun4v.c
+@@ -848,10 +848,10 @@
+ 	if (!irq)
+ 		return -ENOMEM;
+ 
+-	if (pci_sun4v_msiq_setstate(pbm->devhandle, msiqid, HV_MSIQSTATE_IDLE))
+-		return -EINVAL;
+ 	if (pci_sun4v_msiq_setvalid(pbm->devhandle, msiqid, HV_MSIQ_VALID))
+ 		return -EINVAL;
++	if (pci_sun4v_msiq_setstate(pbm->devhandle, msiqid, HV_MSIQSTATE_IDLE))
++		return -EINVAL;
+ 
+ 	return irq;
+ }

@@ -1,0 +1,199 @@
+--- fs/proc/base.c
++++ fs/proc/base.c
+@@ -263,7 +321,7 @@
+ 
+ 	mm = get_task_mm(task);
+ 	if (mm && mm != current->mm &&
+-			!ptrace_may_access(task, mode)) {
++			!ptrace_may_access(task, PTRACE_MODE_READ)) {
+ 		mmput(mm);
+ 		mm = ERR_PTR(-EACCES);
+ 	}
+@@ -816,96 +869,133 @@
+ 
+ static int mem_open(struct inode* inode, struct file* file)
+ {
++	file->private_data = (void*)((long)current->self_exec_id);
++	/* OK to pass negative loff_t, we can catch out-of-range */
++	file->f_mode |= FMODE_UNSIGNED_OFFSET;
++	return 0;
++}
++
++static ssize_t mem_read(struct file * file, char __user * buf,
++			size_t count, loff_t *ppos)
++{
+ 	struct task_struct *task = get_proc_task(file->f_path.dentry->d_inode);
++	char *page;
++	unsigned long src = *ppos;
++	int ret = -ESRCH;
+ 	struct mm_struct *mm;
+ 
+ 	if (!task)
+-		return -ESRCH;
++		goto out_no_task;
+ 
+-	mm = mm_access(task, PTRACE_MODE_ATTACH);
+-	put_task_struct(task);
++	ret = -ENOMEM;
++	page = (char *)__get_free_page(GFP_TEMPORARY);
++	if (!page)
++		goto out;
+ 
++	mm = check_mem_permission(task);
++	ret = PTR_ERR(mm);
+ 	if (IS_ERR(mm))
+-		return PTR_ERR(mm);
++		goto out_free;
++
++	ret = -EIO;
++ 
++	if (file->private_data != (void*)((long)current->self_exec_id))
++		goto out_put;
++
++	ret = 0;
++ 
++	while (count > 0) {
++		int this_len, retval;
++
++		this_len = (count > PAGE_SIZE) ? PAGE_SIZE : count;
++		retval = access_remote_vm(mm, src, page, this_len, 0);
++		if (!retval) {
++			if (!ret)
++				ret = -EIO;
++			break;
++		}
+ 
+-	if (mm) {
+-		/* ensure this mm_struct can't be freed */
+-		atomic_inc(&mm->mm_count);
+-		/* but do not pin its memory */
+-		mmput(mm);
++		if (copy_to_user(buf, page, retval)) {
++			ret = -EFAULT;
++			break;
++		}
++ 
++		ret += retval;
++		src += retval;
++		buf += retval;
++		count -= retval;
+ 	}
++	*ppos = src;
+ 
+-	/* OK to pass negative loff_t, we can catch out-of-range */
+-	file->f_mode |= FMODE_UNSIGNED_OFFSET;
+-	file->private_data = mm;
+-
+-	return 0;
++out_put:
++	mmput(mm);
++out_free:
++	free_page((unsigned long) page);
++out:
++	put_task_struct(task);
++out_no_task:
++	return ret;
+ }
+ 
+-static ssize_t mem_rw(struct file *file, char __user *buf,
+-			size_t count, loff_t *ppos, int write)
++static ssize_t mem_write(struct file * file, const char __user *buf,
++			 size_t count, loff_t *ppos)
+ {
+-	struct mm_struct *mm = file->private_data;
+-	unsigned long addr = *ppos;
+-	ssize_t copied;
++	int copied;
+ 	char *page;
++	struct task_struct *task = get_proc_task(file->f_path.dentry->d_inode);
++	unsigned long dst = *ppos;
++	struct mm_struct *mm;
+ 
+-	if (!mm)
+-		return 0;
++	copied = -ESRCH;
++	if (!task)
++		goto out_no_task;
+ 
++	copied = -ENOMEM;
+ 	page = (char *)__get_free_page(GFP_TEMPORARY);
+ 	if (!page)
+-		return -ENOMEM;
++		goto out_task;
++
++	mm = check_mem_permission(task);
++	copied = PTR_ERR(mm);
++	if (IS_ERR(mm))
++		goto out_free;
++
++	copied = -EIO;
++	if (file->private_data != (void *)((long)current->self_exec_id))
++		goto out_mm;
+ 
+ 	copied = 0;
+-	if (!atomic_inc_not_zero(&mm->mm_users))
+-		goto free;
+-
+ 	while (count > 0) {
+-		int this_len = min_t(int, count, PAGE_SIZE);
++		int this_len, retval;
+ 
+-		if (write && copy_from_user(page, buf, this_len)) {
++		this_len = (count > PAGE_SIZE) ? PAGE_SIZE : count;
++		if (copy_from_user(page, buf, this_len)) {
+ 			copied = -EFAULT;
+ 			break;
+ 		}
+-
+-		this_len = access_remote_vm(mm, addr, page, this_len, write);
+-		if (!this_len) {
++		retval = access_remote_vm(mm, dst, page, this_len, 1);
++		if (!retval) {
+ 			if (!copied)
+ 				copied = -EIO;
+ 			break;
+ 		}
+-
+-		if (!write && copy_to_user(buf, page, this_len)) {
+-			copied = -EFAULT;
+-			break;
+-		}
+-
+-		buf += this_len;
+-		addr += this_len;
+-		copied += this_len;
+-		count -= this_len;
++		copied += retval;
++		buf += retval;
++		dst += retval;
++		count -= retval;			
+ 	}
+-	*ppos = addr;
++	*ppos = dst;
+ 
++out_mm:
+ 	mmput(mm);
+-free:
++out_free:
+ 	free_page((unsigned long) page);
++out_task:
++	put_task_struct(task);
++out_no_task:
+ 	return copied;
+ }
+ 
+-static ssize_t mem_read(struct file *file, char __user *buf,
+-			size_t count, loff_t *ppos)
+-{
+-	return mem_rw(file, buf, count, ppos, 0);
+-}
+-
+-static ssize_t mem_write(struct file *file, const char __user *buf,
+-			 size_t count, loff_t *ppos)
+-{
+-	return mem_rw(file, (char __user*)buf, count, ppos, 1);
+-}
+-
+ loff_t mem_lseek(struct file *file, loff_t offset, int orig)
+ {
+ 	switch (orig) {

@@ -1,0 +1,20 @@
+--- arch/s390/Kconfig
++++ arch/s390/Kconfig
+@@ -89,7 +89,6 @@
+ 	select HAVE_GET_USER_PAGES_FAST
+ 	select HAVE_ARCH_MUTEX_CPU_RELAX
+ 	select HAVE_ARCH_JUMP_LABEL if !MARCH_G5
+-	select HAVE_RCU_TABLE_FREE if SMP
+ 	select ARCH_INLINE_SPIN_TRYLOCK
+ 	select ARCH_INLINE_SPIN_TRYLOCK_BH
+ 	select ARCH_INLINE_SPIN_LOCK
+@@ -228,6 +227,9 @@
+ config SYSVIPC_COMPAT
+ 	def_bool y if COMPAT && SYSVIPC
+ 
++config KEYS_COMPAT
++	def_bool y if COMPAT && KEYS
++
+ config AUDIT_ARCH
+ 	def_bool y
+ 

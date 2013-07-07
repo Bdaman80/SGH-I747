@@ -1,0 +1,12 @@
+--- drivers/ata/libata-eh.c
++++ drivers/ata/libata-eh.c
+@@ -3487,7 +3487,8 @@
+ 	u64 now = get_jiffies_64();
+ 	int *trials = void_arg;
+ 
+-	if (ent->timestamp < now - min(now, interval))
++	if ((ent->eflags & ATA_EFLAG_OLD_ER) ||
++	    (ent->timestamp < now - min(now, interval)))
+ 		return -1;
+ 
+ 	(*trials)++;

@@ -1,0 +1,17 @@
+--- block/blk-map.c
++++ block/blk-map.c
+@@ -204,10 +204,11 @@
+ 		if (!iov[i].iov_len)
+ 			return -EINVAL;
+ 
+-		if (uaddr & queue_dma_alignment(q)) {
++		/*
++		 * Keep going so we check length of all segments
++		 */
++		if (uaddr & queue_dma_alignment(q))
+ 			unaligned = 1;
+-			break;
+-		}
+ 	}
+ 
+ 	if (unaligned || (q->dma_pad_mask & len) || map_data)

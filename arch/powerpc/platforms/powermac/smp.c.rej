@@ -1,0 +1,11 @@
+--- arch/powerpc/platforms/powermac/smp.c
++++ arch/powerpc/platforms/powermac/smp.c
+@@ -414,7 +414,7 @@
+ 
+ static void __init smp_psurge_setup_cpu(int cpu_nr)
+ {
+-	if (cpu_nr != 0)
++	if (cpu_nr != 0 || !psurge_start)
+ 		return;
+ 
+ 	/* reset the entry point so if we get another intr we won't

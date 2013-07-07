@@ -1,0 +1,10 @@
+--- arch/x86/include/asm/processor.h
++++ arch/x86/include/asm/processor.h
+@@ -454,6 +454,7 @@
+ 	unsigned long		trap_no;
+ 	unsigned long		error_code;
+ 	/* floating point and extended processor state */
++	unsigned long		has_fpu;
+ 	struct fpu		fpu;
+ #ifdef CONFIG_X86_32
+ 	/* Virtual 86 mode info */

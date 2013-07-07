@@ -1,0 +1,29 @@
+--- arch/powerpc/kernel/prom_init.c
++++ arch/powerpc/kernel/prom_init.c
+@@ -1020,7 +1020,7 @@
+ 	}
+ 	if (addr == 0)
+ 		return 0;
+-	RELOC(alloc_bottom) = addr;
++	RELOC(alloc_bottom) = addr + size;
+ 
+ 	prom_debug(" -> %x\n", addr);
+ 	prom_debug("  alloc_bottom : %x\n", RELOC(alloc_bottom));
+@@ -1834,7 +1834,7 @@
+ 		chunk = alloc_up(room, 0);
+ 		if (chunk == 0)
+ 			prom_panic("No memory for flatten_device_tree (claim failed)");
+-		*mem_end = RELOC(alloc_top);
++		*mem_end = chunk + room;
+ 	}
+ 
+ 	ret = (void *)*mem_start;
+@@ -2053,7 +2053,7 @@
+ 	mem_start = (unsigned long)alloc_up(room, PAGE_SIZE);
+ 	if (mem_start == 0)
+ 		prom_panic("Can't allocate initial device-tree chunk\n");
+-	mem_end = RELOC(alloc_top);
++	mem_end = mem_start + room;
+ 
+ 	/* Get root of tree */
+ 	root = call_prom("peer", 1, 1, (phandle)0);

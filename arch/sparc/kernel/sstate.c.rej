@@ -1,0 +1,19 @@
+--- arch/sparc/kernel/sstate.c
++++ arch/sparc/kernel/sstate.c
+@@ -14,14 +14,9 @@
+ #include <asm/head.h>
+ #include <asm/io.h>
+ 
+-static int hv_supports_soft_state;
+-
+-static unsigned long kimage_addr_to_ra(const char *p)
+-{
+-	unsigned long val = (unsigned long) p;
++#include "kernel.h"
+ 
+-	return kern_base + (val - KERNBASE);
+-}
++static int hv_supports_soft_state;
+ 
+ static void do_set_sstate(unsigned long state, const char *msg)
+ {

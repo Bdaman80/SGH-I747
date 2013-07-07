@@ -1,0 +1,16 @@
+--- arch/powerpc/mm/numa.c
++++ arch/powerpc/mm/numa.c
+@@ -1214,11 +1214,12 @@
+ 			break;
+ 		}
+ 
+-		of_node_put(memory);
+ 		if (nid >= 0)
+ 			break;
+ 	}
+ 
++	of_node_put(memory);
++
+ 	return nid;
+ }
+ 

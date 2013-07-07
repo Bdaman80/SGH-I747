@@ -1,0 +1,10 @@
+--- drivers/acpi/acpica/nspredef.c
++++ drivers/acpi/acpica/nspredef.c
+@@ -212,6 +212,7 @@
+ 		goto cleanup;
+ 	}
+ 	data->predefined = predefined;
++	data->node = node;
+ 	data->node_flags = node->flags;
+ 	data->pathname = pathname;
+ 

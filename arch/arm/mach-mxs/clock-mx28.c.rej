@@ -1,0 +1,11 @@
+--- arch/arm/mach-mxs/clock-mx28.c
++++ arch/arm/mach-mxs/clock-mx28.c
+@@ -404,7 +404,7 @@
+ 	reg = __raw_readl(CLKCTRL_BASE_ADDR + HW_CLKCTRL_##dr);		\
+ 	reg &= ~BM_CLKCTRL_##dr##_DIV;					\
+ 	reg |= div << BP_CLKCTRL_##dr##_DIV;				\
+-	if (reg | (1 << clk->enable_shift)) {				\
++	if (reg & (1 << clk->enable_shift)) {				\
+ 		pr_err("%s: clock is gated\n", __func__);		\
+ 		return -EINVAL;						\
+ 	}								\

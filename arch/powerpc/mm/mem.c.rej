@@ -1,0 +1,12 @@
+--- arch/powerpc/mm/mem.c
++++ arch/powerpc/mm/mem.c
+@@ -123,7 +123,8 @@
+ 	pgdata = NODE_DATA(nid);
+ 
+ 	start = (unsigned long)__va(start);
+-	create_section_mapping(start, start + size);
++	if (create_section_mapping(start, start + size))
++		return -EINVAL;
+ 
+ 	/* this should work for most non-highmem platforms */
+ 	zone = pgdata->node_zones;

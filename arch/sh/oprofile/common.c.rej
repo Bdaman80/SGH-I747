@@ -1,0 +1,18 @@
+--- arch/sh/oprofile/common.c
++++ arch/sh/oprofile/common.c
+@@ -49,7 +49,7 @@
+ 	return oprofile_perf_init(ops);
+ }
+ 
+-void __exit oprofile_arch_exit(void)
++void oprofile_arch_exit(void)
+ {
+ 	oprofile_perf_exit();
+ 	kfree(sh_pmu_op_name);
+@@ -60,5 +60,5 @@
+ 	ops->backtrace = sh_backtrace;
+ 	return -ENODEV;
+ }
+-void __exit oprofile_arch_exit(void) {}
++void oprofile_arch_exit(void) {}
+ #endif /* CONFIG_HW_PERF_EVENTS */

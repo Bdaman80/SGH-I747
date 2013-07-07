@@ -1,0 +1,57 @@
+--- fs/aio.c
++++ fs/aio.c
+@@ -1397,10 +1399,6 @@
+ 	if (ret < 0)
+ 		goto out;
+ 
+-	ret = rw_verify_area(type, kiocb->ki_filp, &kiocb->ki_pos, ret);
+-	if (ret < 0)
+-		goto out;
+-
+ 	kiocb->ki_nr_segs = kiocb->ki_nbytes;
+ 	kiocb->ki_cur_seg = 0;
+ 	/* ki_nbytes/left now reflect bytes instead of segs */
+@@ -1412,17 +1410,11 @@
+ 	return ret;
+ }
+ 
+-static ssize_t aio_setup_single_vector(int type, struct file * file, struct kiocb *kiocb)
++static ssize_t aio_setup_single_vector(struct kiocb *kiocb)
+ {
+-	int bytes;
+-
+-	bytes = rw_verify_area(type, file, &kiocb->ki_pos, kiocb->ki_left);
+-	if (bytes < 0)
+-		return bytes;
+-
+ 	kiocb->ki_iovec = &kiocb->ki_inline_vec;
+ 	kiocb->ki_iovec->iov_base = kiocb->ki_buf;
+-	kiocb->ki_iovec->iov_len = bytes;
++	kiocb->ki_iovec->iov_len = kiocb->ki_left;
+ 	kiocb->ki_nr_segs = 1;
+ 	kiocb->ki_cur_seg = 0;
+ 	return 0;
+@@ -1447,7 +1439,10 @@
+ 		if (unlikely(!access_ok(VERIFY_WRITE, kiocb->ki_buf,
+ 			kiocb->ki_left)))
+ 			break;
+-		ret = aio_setup_single_vector(READ, file, kiocb);
++		ret = security_file_permission(file, MAY_READ);
++		if (unlikely(ret))
++			break;
++		ret = aio_setup_single_vector(kiocb);
+ 		if (ret)
+ 			break;
+ 		ret = -EINVAL;
+@@ -1462,7 +1457,10 @@
+ 		if (unlikely(!access_ok(VERIFY_READ, kiocb->ki_buf,
+ 			kiocb->ki_left)))
+ 			break;
+-		ret = aio_setup_single_vector(WRITE, file, kiocb);
++		ret = security_file_permission(file, MAY_WRITE);
++		if (unlikely(ret))
++			break;
++		ret = aio_setup_single_vector(kiocb);
+ 		if (ret)
+ 			break;
+ 		ret = -EINVAL;

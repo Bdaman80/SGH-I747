@@ -1,0 +1,11 @@
+--- drivers/gpu/drm/i915/i915_gem.c
++++ drivers/gpu/drm/i915/i915_gem.c
+@@ -1475,7 +1475,7 @@
+ 
+ 	if (obj->base.size > dev_priv->mm.gtt_mappable_end) {
+ 		ret = -E2BIG;
+-		goto unlock;
++		goto out;
+ 	}
+ 
+ 	if (obj->madv != I915_MADV_WILLNEED) {
